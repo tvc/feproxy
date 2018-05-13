@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReClass>
+    <!--ReClassEx-->
+    <TypeDef tdHex="char" tdInt64="__int64" tdInt32="__int32" tdInt16="__int16" tdInt8="__int8" tdQWORD="DWORD64" tdDWORD="DWORD" tdWORD="WORD" tdBYTE="unsigned char" tdFloat="float" tdDouble="double" tdVec2="Vector2" tdVec3="Vector3" tdQuat="Vector4" tdMatrix="matrix3x4_t" tdPChar="char*" tdPWChar="wchar_t*"/>
+    <Header Text=""/>
+    <Footer Text=""/>
+    <Notes Text=""/>
+    <Class Name="N00000000" Type="28" Comment="" Offset="15146236" strOffset="E71CFC" Code="">
+        <Node Name="conn_container" Type="8" Size="4" bHidden="false" Comment="" Pointer="connection_container"/>
+    </Class>
+    <Class Name="connection_container" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="conn_00" Type="8" Size="4" bHidden="false" Comment="" Pointer="connection"/>
+        <Node Name="conn_04" Type="8" Size="4" bHidden="false" Comment="" Pointer="connection"/>
+        <Node Name="N00000018" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000019" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001A" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001B" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001C" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001D" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001E" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000001F" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000020" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000021" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000022" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000023" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000024" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N00000015" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000016" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="connection" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="vtable" Type="26" Size="4" bHidden="false" Comment="">
+            <Function Name="destructor" Comment="" bHidden="false">
+                <Code Assembly="818E10 56                   push esi
+818E11 8B F1                mov esi, ecx
+818E13 E8 18 00 00 00       call 0x00818E30
+818E18 F6 44 24 08 01       test byte ptr ss:[esp+0x08], 0x01
+818E1D 74 09                je 0x00818E28
+818E1F 56                   push esi
+818E20 E8 8E B2 20 00       call 0x00A240B3
+818E25 83 C4 04             add esp, 0x04
+818E28 8B C6                mov eax, esi
+818E2A 5E                   pop esi
+818E2B C2 04 00             retn 0x0004"/>
+            </Function>
+            <Function Name="func_04" Comment="" bHidden="false">
+                <Code Assembly="8161F0 51                   push ecx
+8161F1 53                   push ebx
+8161F2 8B 5C 24 14          mov ebx, dword ptr ss:[esp+0x14]
+8161F6 F6 C3 01             test bl, 0x01
+8161F9 55                   push ebp
+8161FA 56                   push esi
+8161FB 57                   push edi
+8161FC 8B F9                mov edi, ecx
+8161FE 0F 84 95 00 00 00    je 0x00816299
+816204 80 7C 24 24 00       cmp byte ptr ss:[esp+0x24], 0x00
+816209 74 19                je 0x00816224
+81620B 83 7F 04 0A          cmp dword ptr ds:[edi+0x04], 0x0A
+81620F 8D 47 04             lea eax, dword ptr ds:[edi+0x04]
+816212 C7 44 24 10 0A 00 00 00  mov dword ptr ss:[esp+0x10], 0x0000000A
+81621A 7F 04                jnle 0x00816220
+81621C 8D 44 24 10          lea eax, dword ptr ss:[esp+0x10]
+816220 8B 28                mov ebp, dword ptr ds:[eax]
+816222 EB 03                jmp 0x00816227
+816224 8B 6F 08             mov ebp, dword ptr ds:[edi+0x08]
+816227 8B 74 24 18          mov esi, dword ptr ss:[esp+0x18]
+81622B 39 6E 08             cmp dword ptr ds:[esi+0x08], ebp
+81622E 7D 21                jnl 0x00816251
+816230 F6 46 48 01          test byte ptr ds:[esi+0x48], 0x01
+816234 74 0C                je 0x00816242
+816236 8B 46 20             mov eax, dword ptr ds:[esi+0x20]
+816239 50                   push eax
+81623A E8 FC 18 21 00       call 0x00A27B3B
+81623F 83 C4 04             add esp, 0x04
+816242 55                   push ebp
+816243 89 6E 08             mov dword ptr ds:[esi+0x08], ebp
+816246 E8 6F 2A 21 00       call 0x00A28CBA
+81624B 83 C4 04             add esp, 0x04
+81624E 89 46 20             mov dword ptr ds:[esi+0x20], eax
+816251 8A 4F 50             mov cl, byte ptr ds:[edi+0x50]
+816254 8B 46 20             mov eax, dword ptr ds:[esi+0x20]
+816257 88 4E 50             mov byte ptr ds:[esi+0x50], cl
+81625A C7 46 44 00 00 00 00  mov dword ptr ds:[esi+0x44], 0x00000000
+816261 89 46 1C             mov dword ptr ds:[esi+0x1C], eax
+816264 8B 4F 04             mov ecx, dword ptr ds:[edi+0x04]
+816267 85 C9                test ecx, ecx
+816269 74 0E                je 0x00816279
+81626B 8B 57 1C             mov edx, dword ptr ds:[edi+0x1C]
+81626E 51                   push ecx
+81626F 52                   push edx
+816270 50                   push eax
+816271 E8 6A 7A 21 00       call 0x00A2DCE0
+816276 83 C4 0C             add esp, 0x0C
+816279 8B 47 18             mov eax, dword ptr ds:[edi+0x18]
+81627C 89 46 18             mov dword ptr ds:[esi+0x18], eax
+81627F 8B 4F 0C             mov ecx, dword ptr ds:[edi+0x0C]
+816282 89 4E 0C             mov dword ptr ds:[esi+0x0C], ecx
+816285 8B 57 10             mov edx, dword ptr ds:[edi+0x10]
+816288 89 56 10             mov dword ptr ds:[esi+0x10], edx
+81628B 8B 47 14             mov eax, dword ptr ds:[edi+0x14]
+81628E 89 46 14             mov dword ptr ds:[esi+0x14], eax
+816291 8B 4F 04             mov ecx, dword ptr ds:[edi+0x04]
+816294 89 4E 04             mov dword ptr ds:[esi+0x04], ecx
+816297 EB 1D                jmp 0x008162B6
+816299 8B 74 24 18          mov esi, dword ptr ss:[esp+0x18]
+81629D F6 46 48 01          test byte ptr ds:[esi+0x48], 0x01
+8162A1 74 13                je 0x008162B6
+8162A3 8B 56 20             mov edx, dword ptr ds:[esi+0x20]
+8162A6 52                   push edx
+8162A7 E8 8F 18 21 00       call 0x00A27B3B
+8162AC 83 C4 04             add esp, 0x04
+8162AF C7 46 20 00 00 00 00  mov dword ptr ds:[esi+0x20], 0x00000000
+8162B6 B1 02                mov cl, 0x02
+8162B8 84 D9                test cl, bl
+8162BA 0F 84 8D 00 00 00    je 0x0081634D
+8162C0 80 7C 24 24 00       cmp byte ptr ss:[esp+0x24], 0x00
+8162C5 74 19                je 0x008162E0
+8162C7 83 7F 24 0A          cmp dword ptr ds:[edi+0x24], 0x0A
+8162CB 8D 47 24             lea eax, dword ptr ds:[edi+0x24]
+8162CE C7 44 24 24 0A 00 00 00  mov dword ptr ss:[esp+0x24], 0x0000000A
+8162D6 7F 04                jnle 0x008162DC
+8162D8 8D 44 24 24          lea eax, dword ptr ss:[esp+0x24]
+8162DC 8B 28                mov ebp, dword ptr ds:[eax]
+8162DE EB 03                jmp 0x008162E3
+8162E0 8B 6F 28             mov ebp, dword ptr ds:[edi+0x28]
+8162E3 3B 6E 28             cmp ebp, dword ptr ds:[esi+0x28]
+8162E6 8D 5E 28             lea ebx, dword ptr ds:[esi+0x28]
+8162E9 89 6C 24 24          mov dword ptr ss:[esp+0x24], ebp
+8162ED 7E 21                jle 0x00816310
+8162EF 84 4E 48             test byte ptr ds:[esi+0x48], cl
+8162F2 74 0C                je 0x00816300
+8162F4 8B 46 3C             mov eax, dword ptr ds:[esi+0x3C]
+8162F7 50                   push eax
+8162F8 E8 3E 18 21 00       call 0x00A27B3B
+8162FD 83 C4 04             add esp, 0x04
+816300 55                   push ebp
+816301 89 2B                mov dword ptr ds:[ebx], ebp
+816303 E8 B2 29 21 00       call 0x00A28CBA
+816308 83 C4 04             add esp, 0x04
+81630B 89 46 3C             mov dword ptr ds:[esi+0x3C], eax
+81630E 3B 2B                cmp ebp, dword ptr ds:[ebx]
+816310 7D 04                jnl 0x00816316
+816312 8D 5C 24 24          lea ebx, dword ptr ss:[esp+0x24]
+816316 8B 0B                mov ecx, dword ptr ds:[ebx]
+816318 8B 57 3C             mov edx, dword ptr ds:[edi+0x3C]
+81631B 8B 46 3C             mov eax, dword ptr ds:[esi+0x3C]
+81631E 51                   push ecx
+81631F 52                   push edx
+816320 50                   push eax
+816321 E8 BA 79 21 00       call 0x00A2DCE0
+816326 8B 4F 38             mov ecx, dword ptr ds:[edi+0x38]
+816329 8B 5C 24 2C          mov ebx, dword ptr ss:[esp+0x2C]
+81632D 89 4E 38             mov dword ptr ds:[esi+0x38], ecx
+816330 8B 57 2C             mov edx, dword ptr ds:[edi+0x2C]
+816333 89 56 2C             mov dword ptr ds:[esi+0x2C], edx
+816336 8B 47 30             mov eax, dword ptr ds:[edi+0x30]
+816339 89 46 30             mov dword ptr ds:[esi+0x30], eax
+81633C 8B 4F 34             mov ecx, dword ptr ds:[edi+0x34]
+81633F 89 4E 34             mov dword ptr ds:[esi+0x34], ecx
+816342 8B 57 24             mov edx, dword ptr ds:[edi+0x24]
+816345 83 C4 0C             add esp, 0x0C
+816348 89 56 24             mov dword ptr ds:[esi+0x24], edx
+81634B EB 18                jmp 0x00816365
+81634D 84 4E 48             test byte ptr ds:[esi+0x48], cl
+816350 74 13                je 0x00816365
+816352 8B 46 3C             mov eax, dword ptr ds:[esi+0x3C]
+816355 50                   push eax
+816356 E8 E0 17 21 00       call 0x00A27B3B
+81635B 83 C4 04             add esp, 0x04
+81635E C7 46 3C 00 00 00 00  mov dword ptr ds:[esi+0x3C], 0x00000000
+816365 80 7C 24 1C 00       cmp byte ptr ss:[esp+0x1C], 0x00
+81636A 8A 4F 4C             mov cl, byte ptr ds:[edi+0x4C]
+81636D 88 4E 4C             mov byte ptr ds:[esi+0x4C], cl
+816370 89 5E 48             mov dword ptr ds:[esi+0x48], ebx
+816373 74 04                je 0x00816379
+816375 C6 46 4D 01          mov byte ptr ds:[esi+0x4D], 0x01
+816379 5F                   pop edi
+81637A 5E                   pop esi
+81637B 5D                   pop ebp
+81637C 5B                   pop ebx
+81637D 59                   pop ecx
+81637E C2 10 00             retn 0x0010"/>
+            </Function>
+            <Function Name="func_08" Comment="" bHidden="false">
+                <Code Assembly="816CD0 8B 41 54             mov eax, dword ptr ds:[ecx+0x54]
+816CD3 85 C0                test eax, eax
+816CD5 74 08                je 0x00816CDF
+816CD7 8B 4C 24 04          mov ecx, dword ptr ss:[esp+0x04]
+816CDB 51                   push ecx
+816CDC FF D0                call eax
+816CDE 59                   pop ecx
+816CDF C2 04 00             retn 0x0004"/>
+            </Function>
+            <Function Name="func_0C" Comment="" bHidden="false">
+                <Code Assembly="816DC0 32 C0                xor al, al
+816DC2 C3                   ret "/>
+            </Function>
+            <Function Name="prepare_packet" Comment="" bHidden="false">
+                <Code Assembly="819A70 56                   push esi
+819A71 8B F1                mov esi, ecx
+819A73 8B 8E AC 00 00 00    mov ecx, dword ptr ds:[esi+0x000000AC]
+819A79 8B 01                mov eax, dword ptr ds:[ecx]
+819A7B 8B 50 04             mov edx, dword ptr ds:[eax+0x04]
+819A7E FF D2                call edx
+819A80 8B 44 24 08          mov eax, dword ptr ss:[esp+0x08]
+819A84 50                   push eax
+819A85 8B CE                mov ecx, esi
+819A87 E8 74 DD FF FF       call 0x00817800
+819A8C 5E                   pop esi
+819A8D C2 04 00             retn 0x0004
+819A90 56                   push esi
+819A91 8B F1                mov esi, ecx
+819A93 83 7E 58 FF          cmp dword ptr ds:[esi+0x58], 0xFFFFFFFF
+819A97 75 04                jne 0x00819A9D
+819A99 32 C0                xor al, al
+819A9B 5E                   pop esi
+819A9C C3                   ret 
+819A9D 57                   push edi
+819A9E E8 9D D7 FF FF       call 0x00817240
+819AA3 E8 68 FD FF FF       call 0x00819810
+819AA8 83 7E 30 0A          cmp dword ptr ds:[esi+0x30], 0x0A
+819AAC 8B F8                mov edi, eax
+819AAE 75 04                jne 0x00819AB4
+819AB0 C6 46 4D 01          mov byte ptr ds:[esi+0x4D], 0x01
+819AB4 8B 8E AC 00 00 00    mov ecx, dword ptr ds:[esi+0x000000AC]
+819ABA 8B 01                mov eax, dword ptr ds:[ecx]
+819ABC 8B 50 08             mov edx, dword ptr ds:[eax+0x08]
+819ABF FF D2                call edx
+819AC1 85 FF                test edi, edi
+819AC3 5F                   pop edi
+819AC4 0F 9F C0             setnle al
+819AC7 5E                   pop esi
+819AC8 C3                   ret "/>
+            </Function>
+            <Function Name="send_packet" Comment="" bHidden="false">
+                <Code Assembly="819A90 56                   push esi
+819A91 8B F1                mov esi, ecx
+819A93 83 7E 58 FF          cmp dword ptr ds:[esi+0x58], 0xFFFFFFFF
+819A97 75 04                jne 0x00819A9D
+819A99 32 C0                xor al, al
+819A9B 5E                   pop esi
+819A9C C3                   ret 
+819A9D 57                   push edi
+819A9E E8 9D D7 FF FF       call 0x00817240
+819AA3 E8 68 FD FF FF       call 0x00819810
+819AA8 83 7E 30 0A          cmp dword ptr ds:[esi+0x30], 0x0A
+819AAC 8B F8                mov edi, eax
+819AAE 75 04                jne 0x00819AB4
+819AB0 C6 46 4D 01          mov byte ptr ds:[esi+0x4D], 0x01
+819AB4 8B 8E AC 00 00 00    mov ecx, dword ptr ds:[esi+0x000000AC]
+819ABA 8B 01                mov eax, dword ptr ds:[ecx]
+819ABC 8B 50 08             mov edx, dword ptr ds:[eax+0x08]
+819ABF FF D2                call edx
+819AC1 85 FF                test edi, edi
+819AC3 5F                   pop edi
+819AC4 0F 9F C0             setnle al
+819AC7 5E                   pop esi
+819AC8 C3                   ret "/>
+            </Function>
+            <Function Name="is_socket_valid" Comment="" bHidden="false">
+                <Code Assembly="818FC0 83 79 58 FF          cmp dword ptr ds:[ecx+0x58], 0xFFFFFFFF
+818FC4 0F 95 C0             setne al
+818FC7 C3                   ret "/>
+            </Function>
+            <Function Name="func_1C" Comment="" bHidden="false">
+                <Code Assembly="817860 32 C0                xor al, al
+817862 C3                   ret "/>
+            </Function>
+        </Node>
+        <Node Name="recv_buf_off" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_buf_len" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_pkt_len" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_pkt_type" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="unk_14" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_time" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_buf_pos" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_buf" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_buf_off" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_buf_len" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_pkt_len" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_pkt_type" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000039" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_time" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_buf" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000003C" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_buf_pos_off" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000003E" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="pkt_type_size" Type="17" Size="1" bHidden="false" Comment=" 0 = uint8, 1 = uint16 "/>
+        <Node Name="pkt_len_size" Type="17" Size="1" bHidden="false" Comment=" 0 = uint16, 1 = uint32"/>
+        <Node Name="add_send_pkt_len" Type="17" Size="1" bHidden="false" Comment=""/>
+        <Node Name="N00000098" Type="7" Size="1" bHidden="false" Comment=""/>
+        <Node Name="unk_50" Type="17" Size="1" bHidden="false" Comment=""/>
+        <Node Name="N00000095" Type="6" Size="2" bHidden="false" Comment=""/>
+        <Node Name="N00000096" Type="7" Size="1" bHidden="false" Comment=""/>
+        <Node Name="N00000041" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="socket" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000043" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000044" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000045" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000046" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000047" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000048" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000049" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004A" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004B" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004C" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004D" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004E" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000004F" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000050" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000051" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000052" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000053" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="keepalive_pkt_type" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000055" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="hwnd" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="mutex" Type="8" Size="4" bHidden="false" Comment="" Pointer="mutex"/>
+        <Node Name="N00000058" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000059" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="enc_buf_off" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="enc_buf_len" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="enc_buf" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="enc_enabled" Type="12" Size="1" bHidden="false" Comment=""/>
+        <Node Name="N000000B6" Type="6" Size="2" bHidden="false" Comment=""/>
+        <Node Name="N000000B7" Type="7" Size="1" bHidden="false" Comment=""/>
+        <Node Name="send_key_data" Type="1" Size="16" bHidden="false" Comment="" Instance="key_data"/>
+        <Node Name="recv_key_data" Type="1" Size="16" bHidden="false" Comment="" Instance="key_data"/>
+        <Node Name="init_recv_key_data" Type="1" Size="16" bHidden="false" Comment="" Instance="key_data"/>
+        <Node Name="init_recv_key_cnt" Type="10" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000107" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="recv_cnt" Type="14" Size="8" bHidden="false" Comment=""/>
+        <Node Name="send_cnt" Type="14" Size="8" bHidden="false" Comment=""/>
+        <Node Name="socket_event_cb" Type="15" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000010B" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="send_cnt2" Type="14" Size="8" bHidden="false" Comment=""/>
+        <Node Name="recv_cnt2" Type="14" Size="8" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N0000002B" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N0000002C" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N0000008B" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N0000008C" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N0000008E" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N0000008F" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N00000091" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000092" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N00000094" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000095" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N0000009A" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N0000009B" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="mutex" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="vtable" Type="26" Size="4" bHidden="false" Comment="">
+            <Function Name="destructor" Comment="" bHidden="false">
+                <Code Assembly="ERROR: Could not read memory"/>
+            </Function>
+            <Function Name="lock" Comment="" bHidden="false">
+                <Code Assembly="ERROR: Could not read memory"/>
+            </Function>
+            <Function Name="unlock" Comment="" bHidden="false">
+                <Code Assembly="ERROR: Could not read memory"/>
+            </Function>
+            <Function Name="func_0C" Comment="" bHidden="false">
+                <Code Assembly="ERROR: Could not read memory"/>
+            </Function>
+        </Node>
+    </Class>
+    <Class Name="N000000B9" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N000000BA" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="key_data" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="key_data" Type="15" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N000000C1" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N000000C2" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N000000EE" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N000000EF" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F0" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F1" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F2" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F3" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F4" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F5" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F6" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F7" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F8" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000F9" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000FA" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000FB" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000FC" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000FD" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N000000FE" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="key_data" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000102" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000010D" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000010E" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N0000010F" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N00000111" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000112" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000114" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000115" Type="4" Size="4" bHidden="false" Comment=""/>
+        <Node Name="N00000116" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+    <Class Name="N0000012F" Type="28" Comment="" Offset="4194304" strOffset="400000" Code="">
+        <Node Name="N00000130" Type="4" Size="4" bHidden="false" Comment=""/>
+    </Class>
+</ReClass>
