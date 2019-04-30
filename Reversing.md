@@ -1,5 +1,7 @@
-// TODO: put on dokuwiki
+# Reverse engineering
 
+## Old offsets
+```
 // 81A980 send function
 // 819966 send function call
 
@@ -9,21 +11,11 @@
 // WindowProc calls 4F62F0 which calls net event function (connection->socket_event_cb (4D3280))
 
 // HandleSocketEvent( struct connection* connection, DWORD event ) // event == FD_CONNECT || FD_CLOSE || FD_READ
+```
 
-/* http://farside.ph.utexas.edu/teaching/329/lectures/node107.html */
-int random( int seed = 0 ) {
-	const int next = 1;
-	const int A = 16807;
-	const int M = 2147483647;   // 2^31 - 1
-	const int q = 127773;       // M / A
-	const int r = 2836;         // M % A
-
-	if (seed) next = seed;
-	next = A * (next % q) - r * (next / q);
-	if (next < 0) next += M;
-	return next;
-}
-
+## Reverse engineered connection crypto / struct
+```c
+/* PRNG reference: http://farside.ph.utexas.edu/teaching/329/lectures/node107.html */
 uint32_t GenRandomPrefix( struct connection* conn, uint8_t* buffer ) {
 	const uint32_t A = 0x41A7;		// 16807
 	const uint32_t M = 0x7FFFFFFF;	// 2147483647,	2^31 - 1
@@ -33,7 +25,7 @@ uint32_t GenRandomPrefix( struct connection* conn, uint8_t* buffer ) {
 	uint32_t seed = (uint32_t)clock() + (uint32_t)conn;
 	seed = A * ( seed % q ) - r * ( seed / q );
 	if( seed == 0 ) seed += M;
-	
+
 	uint32_t end = ( seed >> 8 ) & 0x3F;
 	for( uint32_t i = 0; i < end; i++ ) {
 		seed = A * ( seed % q ) - r * ( seed / q );
@@ -41,7 +33,7 @@ uint32_t GenRandomPrefix( struct connection* conn, uint8_t* buffer ) {
 		buffer[i] = ( seed >> 8 ) % 0xFE;
 	}
 	buffer[end] = 0xFF;
-	
+
 	return end + 1;
 }
 
@@ -53,7 +45,7 @@ uint32_t InitEncryptionKeys( uint32_t* enc_key_data /* in edi */, struct connect
 
 	uint32_t offset = GenRandomPrefix( conn, buffer );
 	uint32_t ptr = (uint32_t*)( (uint32_t)buffer + offset );
-	
+
 	uint32_t seed = (uint32_t)clock() + (uint32_t)conn;
 	for( uint32_t i = 0; i < 4; i++ ) {
 		for( uint32_t j = 0; j < 2; j++ ) {
@@ -63,7 +55,7 @@ uint32_t InitEncryptionKeys( uint32_t* enc_key_data /* in edi */, struct connect
 		enc_key_data[i] = ( ( ( seed >> 8 ) % 0x7FFF ) << 16 ) | ( ( seed >> 8 ) % 0x7FFF )
 		ptr[i] = enc_key_data[i];
 	}
-	
+
 	return offset + 16;
 }
 
@@ -72,114 +64,114 @@ uint32_t EncryptBuffer( struct connection* conn /* in eax */, uint32_t len /* in
 	const uint32_t M = 0x7FFFFFFF;	// 2147483647,	2^31 - 1
 	const uint32_t q = 0x1F31D;		// 127773,		M / A
 	const uint32_t r = 0xB16;		// 2838,		M % A
-	
+
 	if( !conn )
 		return 1;
-	
+
 	if( conn->enc_enabled && len > 0 ) {
 		for( uint32_t i = 0; i < len; i++ ) {
 			uint32_t seed = conn->send_key_data[conn->send_key_data[3] & 0x3];
 			seed = A * ( seed % q ) - r * ( seed / q );
 			if( seed == 0 ) seed += M;
-			
+
 			dst_buf[i] = src_buf[i] ^ (uint8_t)( ( seed >> 8 ) & 0xFF );
-			
+
 			conn->send_key_data[conn->send_key_data[3] & 0x3] = seed;
 			conn->send_key_data[conn->send_key_data[3] & 0x3] += src_buf[i];
 			conn->send_key_data[3]++;
 		}
 	}
-	
+
 	return 1;
 }
 
 uint32_t SendPacket( struct connection* conn /* in esi */ ) {
 	if( conn->socket == -1 )
 		return 0;
-	
+
 	if( conn->send_buf_off == 0 )
 		return 0;
-	
+
 	// conn->mutex->lock();
 	conn->send_time = GetTickCount();
 	if( conn->send_buf_off + 1 >= conn->enc_buf_len ) {
 		// conn->mutex->unlock();
 		return 0;
 	}
-	
+
 	uint32_t saved_key_data[4];
 	uint32_t init_pkt_len = 0;
 	int32_t sent = 0;
-	
+
 	if( conn->enc_enabled ) {
 		conn->enc_pkt_len = 0;
-		
+
 		/* copy encryption keys to local vars */
 		for( uint32_t i = 0; i < 4; i++ )
 			saved_key_data[i] = conn->send_key_data[i];
-		
+
 		if( conn->send_cnt == 0.0 ) {
 			conn->enc_buf[0] = 0x0B;
-			
+
 			if( conn->send_key_data[0] )
 				OutputDebugString( "*** Faulty Key ***\n" );
-			
+
 			uint32_t enc_key_data[4];
 			uint32_t len = InitEncryptionKeys( enc_key_data, conn, &conn->enc_buf[1] );
-			
+
 			conn->enc_buf_off = 1 + len;
-			
+
 			EncryptBuffer( conn, len, &conn->enc_buf[1], &conn->enc_buf[1] );
-			
+
 			init_pkt_len = conn->enc_buf_off;
-			
+
 			for( uint32 i = 0; i < 4; i++ )
 				conn->send_key_data[i] = enc_key_data[i];
-			
+
 			conn->send_cnt = 1.0;
 		}
-		
+
 		EncryptBuffer( conn, conn->send_buf_off, conn->send_buf, &conn->enc_buf[conn->enc_buf_off] );
-		
+
 		conn->enc_buf_off += conn->send_buf_off;
-		
+
 		sent = SendBuffer( conn->socket, conn->enc_buf, conn->enc_buf_off );
-		
+
 		if( sent != conn->enc_buf_off )
 			OutputDebugString( "*** SHORT WRITE ***\n" );
-		
+
 		if( sent <= 0 || sent - init_pkt_len <= 0 ) {
 			for( uint32_t i = 0; i < 4; i++ )
 				conn->send_key_data[i] = saved_key_data[i];
 			// conn->mutex->unlock();
 			return sent;
 		}
-		
+
 		sent -= init_pkt_len;
 	} else {
 		sent = SendBuffer( conn->socket, conn->send_buf, conn->send_buf_off );
-		
+
 		if( sent <= 0 ) {
 			// conn->mutex->unlock();
 			return sent;
 		}
 	}
-	
+
 	if( sent < conn->send_pkt_off ) {
 		if( conn->enc_enabled ) {
 			for( uint32_t i = 0; i < 4; i++ )
 				conn->send_key_data[i] = saved_key_data[i];
-			
+
 			EncryptBuffer( conn, sent, conn->send_buf, conn->enc_buf );
 		}
-		
+
 		memcpy( conn->send_buf, &conn->send_buf[sent], conn->send_buf_off - sent );
 	}
-	
+
 	conn->send_buf_off -= sent;
 	conn->send_cnt += sent;
 	conn->send_cnt2 += sent;
-	
+
 	// conn->mutex->unlock();
 	return sent;
 }
@@ -187,22 +179,22 @@ uint32_t SendPacket( struct connection* conn /* in esi */ ) {
 uint8_t WritePacketSize( struct connection* conn /* in esi */ ) {
 	if( !conn->is_socket_valid() )
 		return 0;
-	
+
 	uint32_t send_pkt_type_size = conn->send_pkt_type_size ? 2 : 1;
 	uint32_t send_pkt_len_size = conn->send_pkt_len_size ? 4 : 2;
-	
+
 	uint32_t send_pkt_off = conn->send_buf_off - conn->send_pkt_len;
-	
+
 	if( send_pkt_off + send_pkt_type_size + send_pkt_len_size >= conn->send_buf_len )
 		return 0;
-	
+
 	conn->send_pkt_len = conn->send_pkt_len - send_pkt_type_size - send_pkt_len_size;
-	
+
 	if( size == 4 )
 		*( (uint32_t*)( (uint32_t)conn->send_buf + send_pkt_off + send_pkt_type_size ) ) = conn->send_pkt_len;
 	else
 		*( (uint16_t*)( (uint32_t)conn->send_buf + send_pkt_off + send_pkt_type_size ) ) = (uint16_t)conn->send_pkt_len;
-	
+
 	return 1;
 }
 
@@ -211,58 +203,58 @@ uint32_t DecryptBuffer( struct connection* conn /* in esi */, uint8_t* buf, uint
 	const uint32_t M = 0x7FFFFFFF;	// 2147483647,	2^31 - 1
 	const uint32_t q = 0x1F31D;		// 127773,		M / A
 	const uint32_t r = 0xB16;		// 2838,		M % A
-	
+
 	if( !conn->enc_enabled )
 		return 1;
-	
+
 	for( uint32_t i = 0; i < buf_len; i++ ) {
 		uint32_t seed = conn->recv_key_data[conn->recv_key_data[3] & 0x3];
 		seed = A * ( seed % q ) - r * ( seed / q );
 		if( seed == 0 ) seed += M;
-		
+
 		buf[i] ^= (uint8_t)( ( seed >> 8 ) & 0xFF );
-		
+
 		conn->recv_key_data[conn->recv_key_data[3] & 0x3] = seed;
 		conn->recv_key_data[conn->recv_key_data[3] & 0x3] += buf[i];
 		conn->recv_key_data[3]++;
 	}
-	
+
 	return 1;
 }
 
 uint32_t ReadEncryptionKeys( struct connection* conn, uint8_t* buf, uint32_t* key_data, uint32_t buf_len ) {
 	int32_t recv_key_status = conn->recv_key_status;
-	
+
 	if( recv_key_status >= 16 )
 		return buf_len;
-	
+
 	uint32_t remaining = buf_len;
 	uint32_t i = 0;
-	
+
 	if( recv_key_status == -1 && buf_len > 0 ) {
 		while( 1 ) {
 			uint8_t byte = buf[i];
-			
+
 			DecryptBuffer( conn, &byte, 1 );
-			
+
 			remaining--;
 			i++;
-			
+
 			if( byte == 0xFF ) {
 				conn->recv_key_status = 0;
 				break;
 			}
-			
+
 			if( i >= buf_len )
 				break;
 		}
 	}
-	
+
 	if( remaining && i < buf_len ) {
 		do {
 			if( conn->recv_key_status >= 16 )
 				break;
-			
+
 			conn->init_recv_key_data[conn->recv_key_status] = buf[i];
 			DecryptBuffer( &conn->init_recv_key_data[conn->recv_key_status], 1 );
 			conn->recv_key_status++;
@@ -270,20 +262,20 @@ uint32_t ReadEncryptionKeys( struct connection* conn, uint8_t* buf, uint32_t* ke
 			remaining--;
 		} while( i < buf_len );
 	}
-	
+
 	return remaining;
 }
 
 uint32_t RecvPacket( struct connection* conn /* in eax */ ) {
 	if( conn->recv_buf_off >= conn->recv_buf_len )
 		return 0;
-	
+
 	uint32_t avail_len = conn->recv_buf_len - conn->recv_buf_off;
-	
+
 	uint32_t req_len = avail_len;
 	if( req_len >= 0x600 )
 		req_len = 0x600;
-	
+
 	if( conn->unk_50 && conn->recv_buf_pos_off ) {
 		if( conn->recv_buf_pos_off + conn->recv_buf_off + req_len > conn->recv_buf_len ) {
 			if( conn->recv_buf_off )
@@ -292,16 +284,16 @@ uint32_t RecvPacket( struct connection* conn /* in eax */ ) {
 			conn->recv_buf_pos = conn->recv_buf;
 		}
 	}
-	
+
 	int32_t recvd = recv( conn->socket, &conn->recv_buf_pos[conn->recv_buf_off], req_len );
 	if( recvd == -1 )
 		return -( WSAGetLastError() != 0x2733 );
 	if( recvd <= 0 )
 		return recvd;
-	
+
 	double recv_cnt = conn->recv_cnt;
 	conn->recv_cnt += recvd;
-	
+
 	if( recv_cnt == 0.0 ) {
 		if( conn->recv_buf_pos[conn->recv_buf_off] == 0x0B ) {
 			conn->enc_enabled = 1;
@@ -312,14 +304,14 @@ uint32_t RecvPacket( struct connection* conn /* in eax */ ) {
 			);
 		}
 	}
-	
+
 	if( conn->enc_enabled ) {
 		if( recvd < 0 )
 			return recvd;
-		
+
 		if( conn->recv_key_status < 16 ) {
 			uint32_t result = ReadEncryptionKeys( conn, &conn->recv_buf_pos[conn->recv_buf_off], conn->init_recv_key_data, recvd );
-			
+
 			if( result ) {
 				memcpy(
 					&conn->recv_buf_pos[conn->recv_buf_off],
@@ -329,18 +321,18 @@ uint32_t RecvPacket( struct connection* conn /* in eax */ ) {
 				recvd = result;
 			} else
 				recvd = 0;
-			
+
 			if( conn->recv_key_status == 16 )
 				for( uint32_t i = 0; i < 4; i++ )
 					conn->recv_key_data[i] = conn->init_recv_key_data[i];
 		}
-		
+
 		if( recvd <= 0 )
 			return recvd;
-		
+
 		DecryptBuffer( &conn->recv_buf_pos[conn->recv_buf_off], recvd );
 	}
-	
+
 	if( recvd > 0 ) {
 		conn->recv_buf_off += recvd;
 		if( conn->unk_4E )
@@ -348,7 +340,7 @@ uint32_t RecvPacket( struct connection* conn /* in eax */ ) {
 		conn->recv_time = GetTickCount();
 		conn->recv_cnt2 += recvd;
 	}
-	
+
 	return recvd;
 }
 
@@ -380,44 +372,44 @@ struct connection {
 	uint32_t recv_buf_len;		// 0x08
 	uint32_t recv_pkt_len;		// 0x0C
 	uint32_t recv_pkt_type;		// 0x10
-	
+
 	uint32_t unk_14;			// 0x14
-	
+
 	uint32_t recv_time;			// 0x18
 	uint8_t* recv_buf_pos;		// 0x1C
 	uint8_t* recv_buf;			// 0x20
-	
+
 	uint32_t send_buf_off;		// 0x24
 	uint32_t send_buf_len;		// 0x28
 	uint32_t send_pkt_len;		// 0x2C
 	uint32_t send_pkt_type;		// 0x30
-	
+
 	uint8_t unk_34[0x04];		// 0x34
-	
+
 	uint32_t send_time;			// 0x38
-	uint32_t send_buf;			// 0x3C
-	
+	uint8_t* send_buf;			// 0x3C
+
 	uint8_t unk_40[0x04];		// 0x40
-	
+
 	uint32_t recv_buf_pos_off;	// 0x44
-	
+
 	uint8_t unk_48[0x04];		// 0x48
-	
+
 	uint8_t pkt_type_size;		// 0x4C 0 = uint8, 1 = uint16
 	uint8_t pkt_len_size;		// 0x4D 0 = uint16, 1 = uint32
-	
+
 	uint8_t add_send_pkt_len;	// 0x4E boolean, add data length to send_pkt_len after writing in send_buf
 	uint8_t unk_4F;				// 0x4F
 	uint8_t unk_50;				// 0x50
-	
+
 	uint8_t unk_51[0x07];		// 0x51
-	
+
 	SOCKET socket;				// 0x58
 
 	uint8_t unk_5C[0x44];		// 0x5C
-	
+
 	uint32_t keepalive_pkt_type;	// 0xA0
-	
+
 	uint8_t unk_A4[4];			// 0xA4
 
 	HWND hwnd;					// 0xA8
@@ -441,11 +433,11 @@ struct connection {
 
 	double recv_cnt;			// 0x100
 	double send_cnt;			// 0x108
-	
+
 	uintptr_t socket_event_cb;	// 0x110 = 4D3280
 
 	uint8_t unk_114[0x04];		// 0x114
-	
+
 	double send_cnt2;			// 0x118
 	double recv_cnt2;			// 0x120
 };
@@ -460,11 +452,11 @@ struct linked_list_node** conn_list = (struct linked_list_node**)0xE74348;
 struct connection_container { // constructor = 4932D0
 	struct connection* conn_00;	// 0x00
 	struct connection* conn_04;	// 0x04
-	
+
 	uint8_t unk_08[0x1C];		// 0x08
-	
+
 	uint8_t enc_enabled;		// 0x24
-	
+
 	uint8_t unk_25[0x17];		// 0x25
 };
 struct connection_container** conn_container = (struct connection_container**)0xE71CFC;
@@ -495,8 +487,10 @@ struct PACKET_USER_SYSTEM_LISTDESC {
 };
 
 #pragma pack(pop)
+```
 
-/*
+## Debug output on startup
+```
 DebugString: "[0x00000001] Steam 0\n"
 DebugString: "Class Glyph is 0\n"
 DebugString: "Class Desktop is 1\n"
@@ -948,4 +942,4 @@ DebugString: "[0x00000055] Loading Texture: .\\bolton\\hmm\\ind_acc\\heads\\age0
 DebugString: "[0x00000055] Loading Texture: .\\bolton\\-armrtextures\\collar_nm.dds\n"
 DebugString: "[0x00000055] Loading Texture: .\\bolton\\-armrtextures\\collar_dm.dds\n"
 DebugString: "[0x00000055] Loading Texture: .\\bolton\\-armrtextures\\collar_scm.dds\n"
-*/
+```
