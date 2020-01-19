@@ -15,7 +15,7 @@
 
 ## Reverse engineered connection crypto / struct
 ```c
-/* PRNG reference: http://farside.ph.utexas.edu/teaching/329/lectures/node107.html */
+/* PRNG reference: https://en.wikipedia.org/wiki/Lehmer_random_number_generator */
 uint32_t GenRandomPrefix( struct connection* conn, uint8_t* buffer ) {
 	const uint32_t A = 0x41A7;		// 16807
 	const uint32_t M = 0x7FFFFFFF;	// 2147483647,	2^31 - 1
