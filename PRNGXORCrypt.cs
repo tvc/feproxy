@@ -47,7 +47,7 @@ namespace FEProxy {
 		}
 
 		public void Process( byte[] inBuffer, int inOffset, byte[] outBuffer, int outOffset, int count ) {
-			/* pseudorandom key gen described here: http://farside.ph.utexas.edu/teaching/329/lectures/node107.html */
+			/* PRNG reference: https://en.wikipedia.org/wiki/Lehmer_random_number_generator */
 
 			#if DEBUG
 			if( inBuffer == null ) throw new ArgumentNullException( nameof( inBuffer ) );
@@ -74,7 +74,7 @@ namespace FEProxy {
 					_seeds[_seeds[3] & 0x3] += inBuffer[inOffset + i]; // Add plaintext byte value
 					_seeds[3]++;
 				}
-				
+
 				outBuffer[outOffset + i] = (byte)( inBuffer[inOffset + i] ^ seed >> 8 & 0xFF );
 
 				if( _cryptMode == PrngXorCryptMode.Decrypt ) {
